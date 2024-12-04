@@ -1,23 +1,30 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Transaction {
+
 	
 	//private static instance
-	private static Transaction instance;
+		private static Transaction instance;
 
-	//private constructor
-	private Transaction() {}
-	
-	//public accessor method
-	public static Transaction getInstance() 
-	{
-		if (instance == null) 
+		//private constructor
+		private Transaction() {}
+		
+		//public accessor method
+		public static Transaction getInstance() 
 		{
-			instance = new Transaction();
+			if (instance == null) 
+			{
+				instance = new Transaction();
+			}
+			return instance;
 		}
-		return instance;
-	}
+		
+		
     // Perform the borrowing of a book
     public boolean borrowBook(Book book, Member member) {
         if (book.isAvailable()) {
@@ -25,6 +32,8 @@ public class Transaction {
             member.borrowBook(book); 
             String transactionDetails = getCurrentDateTime() + " - Borrowing: " + member.getName() + " borrowed " + book.getTitle();
             System.out.println(transactionDetails);
+            //Call to saveTransaction method
+            saveTransaction(transactionDetails);
             return true;
         } else {
             System.out.println("The book is not available.");
@@ -39,6 +48,8 @@ public class Transaction {
             book.returnBook();
             String transactionDetails = getCurrentDateTime() + " - Returning: " + member.getName() + " returned " + book.getTitle();
             System.out.println(transactionDetails);
+            //Call to saveTransaction method
+            saveTransaction(transactionDetails);
         } else {
             System.out.println("This book was not borrowed by the member.");
         }
@@ -48,5 +59,22 @@ public class Transaction {
     private String getCurrentDateTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date());
+    }
+    
+    private void saveTransaction(String transactionDetails)
+    {
+    	//file location
+    	File file = new File("transactions.txt");
+    	
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true)))
+    	{
+    		//write the transactionDetails on transactions.txt
+    		writer.write(transactionDetails);
+    		//goes to new line after every transaction detail input
+    		writer.newLine();
+    	} catch (IOException e) 
+    	{
+    		System.out.println("Error occurred when going to file: " + e.getMessage());
+    	}
     }
 }
