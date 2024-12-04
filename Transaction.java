@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Transaction {
 
@@ -75,6 +76,33 @@ public class Transaction {
     	} catch (IOException e) 
     	{
     		System.out.println("Error occurred when going to file: " + e.getMessage());
+    	}
+    }
+    
+    public void displayTransactionHistory()
+    {
+    	//file location
+    	File file = new File("transaction.txt");
+    	
+    	//checks if file exists
+    	if (!file.exists())
+    	{
+    		System.out.println("File does not exist");
+    		return;
+    	}
+    	
+    	//try catch used to display transaction history if any error occurs the exception will be caught
+    	try (Scanner scanner = new Scanner(file))
+    	{
+    		System.out.println("Display of Transaction History: ");
+    		
+    		while (scanner.hasNextLine())
+    		{
+    			System.out.println(scanner.nextLine());
+    		}
+    	} catch (IOException e) 
+    	{
+    		System.out.println("Error with file: " + e.getMessage());
     	}
     }
 }
