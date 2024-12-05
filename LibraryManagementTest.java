@@ -1,4 +1,6 @@
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,5 +56,40 @@ public class LibraryManagementTest
 		{
 			assertEquals("id should be between 100 and 999.", e.getMessage());
 		}
+	}
+	
+	@Test
+	public void testBorrowReturn() 
+	{
+		Book book = new Book(200, "Test Book");
+		Member member = new Member(1, "Test Member");
+		
+		//adds the book and member from above to library
+		library.addBook(book);
+		library.addMember(member);
+		
+		//asserts that book is available
+		assertTrue("Book is initially available", book.isAvailable());
+		
+		boolean borrowSuccess = transaction.borrowBook(book, member);
+		
+		//asserts that the book is borrowed 
+		assertTrue("The book has been successfully borrowed", borrowSuccess);
+		
+		//asserts that the book is unavailable to be borrowed
+		assertFalse("The Book is unavailable", book.isAvailable());
+		
+		//makes sure borrowing still fails
+		borrowSuccess = transaction.borrowBook(book, member);
+		
+		//book is returned 
+		boolean returnSuccess = transaction.returnBook(book, member);
+		
+		assertTrue("Book is available again", returnSuccess);
+		
+		//should return false as the book is not borrowed 
+		returnSuccess = transaction.returnBook(book, member);
+		
+		assertFalse("Book cannot be returned if not borrowed", returnSuccess);
 	}
 }
