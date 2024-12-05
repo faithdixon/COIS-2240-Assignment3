@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 public class LibraryManagementTest 
 {
@@ -91,5 +93,20 @@ public class LibraryManagementTest
 		returnSuccess = transaction.returnBook(book, member);
 		
 		assertFalse("Book cannot be returned if not borrowed", returnSuccess);
+	}
+	
+	public void  testSingletonTransaction() throws Exception
+	{
+		Constructor<Transaction> constructor = Transaction.class.getDeclaredConstructor();
+		
+		int modifiers = constructor.getModifiers();
+		assertEquals("Constructor is private", Modifier.isPrivate(modifiers));
+		
+		//give access to private constructor
+		constructor.setAccessible(true);
+		Transaction instance1 = constructor.newInstance();
+		Transaction instance2 = constructor.newInstance();
+		assertTrue("Transaction instances shouldn't be the same", instance1!=instance2);
+		
 	}
 }
